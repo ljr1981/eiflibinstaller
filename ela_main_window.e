@@ -555,11 +555,35 @@ feature {NONE} -- Implementation: Basic Ops
 		end
 
 	move_vcpkg_install_results
-			--
+			--mkdir "D:\Users\LJR19\Documents\GitHub\wrap_gsl\library\C\lib"
+			--cd "D:\Users\LJR19\Documents\GitHub\wrap_gsl\library\C\lib"
+			--copy "D:\Users\LJR19\Documents\GitHub\vcpkg\buildtrees\gsl\x64-windows-rel\gsl.lib"
+			--copy "D:\Users\LJR19\Documents\GitHub\vcpkg\buildtrees\gsl\x64-windows-rel\gsl.dll"
+			--copy "D:\Users\LJR19\Documents\GitHub\vcpkg\buildtrees\gsl\x64-windows-rel\gslcblas.lib"
+			--copy "D:\Users\LJR19\Documents\GitHub\vcpkg\buildtrees\gsl\x64-windows-rel\gslcblas.dll"
+		local
+			l_cmd: STRING
 		do
 			out_text_append ("Move vcpkg install result *.lib or dll")
 			log_info (Current, "move_vcpkg_install_results")
+			l_cmd := move_cmd.twin
+			l_cmd.replace_substring_all ("<<FILES_LIB_PATH>>", vcpkg_lib_targ_text.text)
+			l_cmd.replace_substring_all ("<<FILES_DLL_PATH>>", vcpkg_dll_targ_text.text)
+			l_cmd.replace_substring_all ("<<VCPKG_REL_PATH>>", vcpkg_path_text.text + vcpkg_windows_rel_path.name.out + "\")
+			do_step_batch (l_cmd)
 		end
+
+	move_cmd: STRING = "[
+mkdir "<<FILES_LIB_PATH>>"
+cd "<<FILES_LIB_PATH>>"
+copy "<<VCPKG_REL_PATH>>gsl.lib"
+copy "<<VCPKG_REL_PATH>>gsl.dll"
+mkdir "<<FILES_DLL_PATH>>"
+cd "<<FILES_DLL_PATH>>"
+copy "<<VCPKG_REL_PATH>>gslcblas.lib"
+copy "<<VCPKG_REL_PATH>>gslcblas.dll"
+
+]"
 
 	do_wrapc_generation
 			--
