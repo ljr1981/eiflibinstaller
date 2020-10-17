@@ -572,10 +572,25 @@ feature {NONE} -- Implementation: Basic Ops
 		do
 			out_text_append ("Move vcpkg install result *.lib or dll")
 			log_info (Current, "move_vcpkg_install_results")
-			l_cmd := move_cmd.twin
-			l_cmd.replace_substring_all ("<<FILES_LIB_PATH>>", vcpkg_lib_targ_text.text)
-			l_cmd.replace_substring_all ("<<FILES_DLL_PATH>>", vcpkg_dll_targ_text.text)
-			l_cmd.replace_substring_all ("<<VCPKG_REL_PATH>>", vcpkg_path_text.text + vcpkg_windows_rel_path.name.out + "\")
+			create l_cmd.make_empty
+			if not vcpkg_lib_targ_text.text.is_empty and then not vcpkg_dll_targ_text.text.is_empty then
+				l_cmd.append_string_general ("mkdir %"" + lib_path_text.text + "%"%N")
+				l_cmd.append_string_general ("cd %"" + lib_path_text.text + "%"%N")
+				across
+					vcpkg_lib_text.text.split (',') as ic_libs
+				loop
+					l_cmd.append_string_general ("copy %"" + vcpkg_path_text.text + vcpkg_windows_rel_path.name.out + "\" + ic_libs.item + "%"%N")
+				end
+			end
+			if not vcpkg_dll_targ_text.text.is_empty and then not vcpkg_dll_targ_text.text.is_empty then
+				l_cmd.append_string_general ("mkdir %"" + lib_path_text.text + "%"%N")
+				l_cmd.append_string_general ("cd %"" + lib_path_text.text + "%"%N")
+				across
+					vcpkg_dll_text.text.split (',') as ic_dlls
+				loop
+					l_cmd.append_string_general ("copy %"" + vcpkg_path_text.text + vcpkg_windows_rel_path.name.out + "\" + ic_dlls.item + "%"%N")
+				end
+			end
 			do_step_batch (l_cmd)
 		end
 
