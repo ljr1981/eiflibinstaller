@@ -593,9 +593,35 @@ copy "<<VCPKG_REL_PATH>>gslcblas.dll"
 
 	do_wrapc_generation
 			--
+		note
+			process_description: "[
+				Use the path and batch file below to set the stage for finish_freezing:
+				
+				C:\Program Files\Eiffel Software\EiffelStudio 20.05 Standard\studio\config\win64\esvars.bat
+				
+				This is <<eif_path_text.text>> + "\studio\config\<<PLATFORM>>\" + "esvars.bat"
+				
+				Doing a CALL to the "batch file" (above) in our l_cmd script (below)
+				
+				Then we CD to the "wrap_gsl\library\generated_wrapper\c\src", which is:
+				
+				<<path_to_lib>> + "\library\generated_wrapper\c\src"
+				
+				and then we "finish_freezing -library"
+				]"
+		local
+			l_cmd: STRING
 		do
 			out_text_append ("CALL WrapC generator batch file")
 			log_info (Current, "do_wrapc_generation")
+
+			l_cmd := "CALL %"" + eif_path_text.text + "\" + "studio\config\" + platform + "\esvars.bat%"%N"
+			l_cmd.append_string_general ("ECHO esvars complete.")
+			l_cmd.append_string_general ("ECHO change to src directory ...")
+			l_cmd.append_string_general ("cd %"" + lib_path_text.text + "\library\generated_wrapper\c\src%"%N")
+			l_cmd.append_string_general ("ECHO Now, finish_freezing library ...")
+			l_cmd.append_string_general ("finish_freezing -library")
+			do_step_batch (l_cmd)
 		end
 
 	do_post_generation_finish_freezing
