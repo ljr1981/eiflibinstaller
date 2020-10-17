@@ -555,12 +555,18 @@ feature {NONE} -- Implementation: Basic Ops
 		end
 
 	move_vcpkg_install_results
-			--mkdir "D:\Users\LJR19\Documents\GitHub\wrap_gsl\library\C\lib"
-			--cd "D:\Users\LJR19\Documents\GitHub\wrap_gsl\library\C\lib"
-			--copy "D:\Users\LJR19\Documents\GitHub\vcpkg\buildtrees\gsl\x64-windows-rel\gsl.lib"
-			--copy "D:\Users\LJR19\Documents\GitHub\vcpkg\buildtrees\gsl\x64-windows-rel\gsl.dll"
-			--copy "D:\Users\LJR19\Documents\GitHub\vcpkg\buildtrees\gsl\x64-windows-rel\gslcblas.lib"
-			--copy "D:\Users\LJR19\Documents\GitHub\vcpkg\buildtrees\gsl\x64-windows-rel\gslcblas.dll"
+			-- Move vcpkg result lib/dll file to target.
+		note
+			example: "[
+				mkdir "D:\Users\LJR19\Documents\GitHub\wrap_gsl\library\C\lib"
+				cd "D:\Users\LJR19\Documents\GitHub\wrap_gsl\library\C\lib"
+				copy "D:\Users\LJR19\Documents\GitHub\vcpkg\buildtrees\gsl\x64-windows-rel\gsl.lib"
+				copy "D:\Users\LJR19\Documents\GitHub\vcpkg\buildtrees\gsl\x64-windows-rel\gsl.dll"
+				mkdir "D:\Users\LJR19\Documents\GitHub\wrap_gsl\library\C\lib"
+				cd "D:\Users\LJR19\Documents\GitHub\wrap_gsl\library\C\lib"
+				copy "D:\Users\LJR19\Documents\GitHub\vcpkg\buildtrees\gsl\x64-windows-rel\gslcblas.lib"
+				copy "D:\Users\LJR19\Documents\GitHub\vcpkg\buildtrees\gsl\x64-windows-rel\gslcblas.dll"
+				]"
 		local
 			l_cmd: STRING
 		do
