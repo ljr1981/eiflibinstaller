@@ -616,11 +616,11 @@ copy "<<VCPKG_REL_PATH>>gslcblas.dll"
 			log_info (Current, "do_wrapc_generation")
 
 			l_cmd := "CALL %"" + eif_path_text.text + "\" + "studio\config\" + platform + "\esvars.bat%"%N"
-			l_cmd.append_string_general ("ECHO esvars complete.")
-			l_cmd.append_string_general ("ECHO change to src directory ...")
+			l_cmd.append_string_general ("ECHO esvars complete.%N")
+			l_cmd.append_string_general ("ECHO change to src directory ...%N")
 			l_cmd.append_string_general ("cd %"" + lib_path_text.text + "\library\generated_wrapper\c\src%"%N")
-			l_cmd.append_string_general ("ECHO Now, finish_freezing library ...")
-			l_cmd.append_string_general ("finish_freezing -library")
+			l_cmd.append_string_general ("ECHO Now, finish_freezing library ...%N")
+			l_cmd.append_string_general ("finish_freezing -library%N")
 			do_step_batch (l_cmd)
 		end
 
@@ -654,10 +654,14 @@ feature {NONE} -- Implementation: Access
 			-- perform `process' call to "output_of_command_with_agent"
 		local
 			l_file: PLAIN_TEXT_FILE
+			l_env: EXECUTION_ENVIRONMENT
 		do
+			create l_env
 			step := step + 1
 			create l_file.make_create_read_write ("step_" + step.out + ".bat")
 			l_file.put_string (a_cmd)
+			l_file.put_string ("%N")
+			l_file.put_string ("cd %"" + l_env.current_working_path.name.out + "%"%N")
 			l_file.close
 
 			process.output_of_command_with_agent ("step_" + step.out + ".bat", "./", agent out_text_append (?))
