@@ -549,7 +549,16 @@ feature {NONE} -- Implementation: Basic Ops
 			l_cmd.append_string_general ("vcpkg.exe install <<LIB>>%N")
 
 			l_cmd.replace_substring_all ("<<VCPKG_PATH>>", vcpkg_path_text.text)
+			lib_name_text.text.adjust
 			l_cmd.replace_substring_all ("<<LIB>>", lib_name_text.text)
+			if l_cmd [l_cmd.count] = '%N' or l_cmd [l_cmd.count] = '%R' then
+				l_cmd.remove_tail (1)
+			end
+			if is_x64 then
+				l_cmd.append_string_general (":x64-windows")
+			else
+				l_cmd.append_string_general (":x86-windows")
+			end
 
 			do_step_batch_with_reset (l_cmd)
 		end
@@ -574,8 +583,9 @@ feature {NONE} -- Implementation: Basic Ops
 			log_info (Current, "move_vcpkg_install_results")
 			create l_cmd.make_empty
 			if not vcpkg_lib_targ_text.text.is_empty and then not vcpkg_dll_targ_text.text.is_empty then
-				l_cmd.append_string_general ("mkdir %"" + lib_path_text.text + "%"%N")
-				l_cmd.append_string_general ("cd %"" + lib_path_text.text + "%"%N")
+				lib_path_text.text.adjust
+				l_cmd.append_string_general ("mkdir %"" + vcpkg_lib_targ_text.text + "%"%N")
+				l_cmd.append_string_general ("cd %"" + vcpkg_lib_targ_text.text + "%"%N")
 				across
 					vcpkg_lib_text.text.split (',') as ic_libs
 				loop
@@ -583,8 +593,8 @@ feature {NONE} -- Implementation: Basic Ops
 				end
 			end
 			if not vcpkg_dll_targ_text.text.is_empty and then not vcpkg_dll_targ_text.text.is_empty then
-				l_cmd.append_string_general ("mkdir %"" + lib_path_text.text + "%"%N")
-				l_cmd.append_string_general ("cd %"" + lib_path_text.text + "%"%N")
+				l_cmd.append_string_general ("mkdir %"" + vcpkg_dll_targ_text.text + "%"%N")
+				l_cmd.append_string_general ("cd %"" + vcpkg_dll_targ_text.text + "%"%N")
 				across
 					vcpkg_dll_text.text.split (',') as ic_dlls
 				loop
