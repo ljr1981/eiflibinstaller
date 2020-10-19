@@ -68,8 +68,14 @@ feature {NONE} -- Initialization
 			if attached prefs.get_preference_value_direct ("files.lib_path") as al_pref then
 				vcpkg_lib_targ_text.set_text (al_pref)
 			end
+			if attached prefs.get_preference_value_direct ("files.lib_src_path") as al_pref then
+				vcpkg_lib_src_text.set_text (al_pref)
+			end
 			if attached prefs.get_preference_value_direct ("files.dll_path") as al_pref then
 				vcpkg_dll_targ_text.set_text (al_pref)
+			end
+			if attached prefs.get_preference_value_direct ("files.dll_src_path") as al_pref then
+				vcpkg_dll_src_text.set_text (al_pref)
 			end
 			if attached prefs.get_preference_value_direct ("paths.eiffel_studio") as al_pref then
 				eif_path_text.set_text (al_pref)
@@ -124,6 +130,9 @@ feature {NONE} -- Initialization
 			create 	vcpkg_lib_targ_label.make_with_text ("Target path: ")
 			create vcpkg_lib_targ_text.make_with_text ("")
 			create vcpkg_lib_targ_btn.make_with_text ("...")
+			create vcpkg_lib_src_label.make_with_text ("Src path: ")
+			create vcpkg_lib_src_text.make_with_text ("")
+			create vcpkg_lib_src_btn.make_with_text ("...")
 
 			create vcpkg_dll_box
 			set_padding_and_border (vcpkg_dll_box)
@@ -133,7 +142,9 @@ feature {NONE} -- Initialization
 			create 	vcpkg_dll_targ_label.make_with_text ("Target path: ")
 			create vcpkg_dll_targ_text.make_with_text ("")
 			create vcpkg_dll_targ_btn.make_with_text ("...")
-
+			create vcpkg_dll_src_label.make_with_text ("Src path: ")
+			create vcpkg_dll_src_text.make_with_text ("")
+			create vcpkg_dll_src_btn.make_with_text ("...")
 
 			create eif_path_box
 			set_padding_and_border (eif_path_box)
@@ -198,6 +209,11 @@ feature {NONE} -- Initialization
 			vcpkg_lib_box.extend (vcpkg_lib_label)
 			vcpkg_lib_box.disable_item_expand (vcpkg_lib_label)
 			vcpkg_lib_box.extend (vcpkg_lib_text)
+			vcpkg_lib_box.extend (vcpkg_lib_src_label)
+			vcpkg_lib_box.disable_item_expand (vcpkg_lib_src_label)
+			vcpkg_lib_box.extend (vcpkg_lib_src_text)
+			vcpkg_lib_box.extend (vcpkg_lib_src_btn)
+			vcpkg_lib_box.disable_item_expand (vcpkg_lib_src_btn)
 			vcpkg_lib_box.extend (vcpkg_lib_targ_label)
 			vcpkg_lib_box.disable_item_expand (vcpkg_lib_targ_label)
 			vcpkg_lib_box.extend (vcpkg_lib_targ_text)
@@ -209,6 +225,11 @@ feature {NONE} -- Initialization
 			vcpkg_dll_box.extend (vcpkg_dll_label)
 			vcpkg_dll_box.disable_item_expand (vcpkg_dll_label)
 			vcpkg_dll_box.extend (vcpkg_dll_text)
+			vcpkg_dll_box.extend (vcpkg_dll_src_label)
+			vcpkg_dll_box.disable_item_expand (vcpkg_dll_src_label)
+			vcpkg_dll_box.extend (vcpkg_dll_src_text)
+			vcpkg_dll_box.extend (vcpkg_dll_src_btn)
+			vcpkg_dll_box.disable_item_expand (vcpkg_dll_src_btn)
 			vcpkg_dll_box.extend (vcpkg_dll_targ_label)
 			vcpkg_dll_box.disable_item_expand (vcpkg_dll_targ_label)
 			vcpkg_dll_box.extend (vcpkg_dll_targ_text)
@@ -254,6 +275,9 @@ feature {NONE} -- Initialization
 			vcpkg_path_btn.select_actions.extend (agent on_install_ready_test)
 			eif_path_btn.select_actions.extend (agent on_install_ready_test)
 			eif_path_text.focus_out_actions.extend (agent on_install_ready_test)
+
+			vcpkg_lib_src_btn.select_actions.extend (agent on_vcpkg_lib_src_btn_select)
+			vcpkg_dll_src_btn.select_actions.extend (agent on_vcpkg_dll_src_btn_select)
 
 			vcpkg_lib_targ_btn.select_actions.extend (agent on_vcpkg_lib_targ_btn_select)
 			vcpkg_dll_targ_btn.select_actions.extend (agent on_vcpkg_dll_targ_btn_select)
@@ -342,6 +366,19 @@ feature {NONE} -- GUI Events
 			set_string_pref ("library.libs", vcpkg_lib_text.text)
 		end
 
+	on_vcpkg_lib_src_btn_select
+			-- What happens on-click (select) of LIB src button?
+		local
+			l_dialog: EV_DIRECTORY_DIALOG
+		do
+			create l_dialog.make_with_title ("Locate vcpkg LIB src directory")
+			l_dialog.show_modal_to_window (Current)
+			if not l_dialog.path.is_empty then
+				vcpkg_lib_src_text.set_text (l_dialog.path.name.out)
+				set_path_pref ("files.lib_src_path", l_dialog.path)
+			end
+		end
+
 	on_vcpkg_lib_targ_btn_select
 			-- What happens on-click (select) of LIB target button?
 		local
@@ -359,6 +396,19 @@ feature {NONE} -- GUI Events
 			-- What happens on focus-out of DLL path text?
 		do
 			set_string_pref ("library.dlls", vcpkg_dll_text.text)
+		end
+
+	on_vcpkg_dll_src_btn_select
+			-- What happens on-lick (select) of DLL src button?
+		local
+			l_dialog: EV_DIRECTORY_DIALOG
+		do
+			create l_dialog.make_with_title ("Locate vcpkg DLL src directory")
+			l_dialog.show_modal_to_window (Current)
+			if not l_dialog.path.is_empty then
+				vcpkg_dll_src_text.set_text (l_dialog.path.name.out)
+				set_path_pref ("files.dll_src_path", l_dialog.path)
+			end
 		end
 
 	on_vcpkg_dll_targ_btn_select
@@ -504,11 +554,15 @@ feature -- Preferences
 			Result.save_preference (l_arr_pref)
 			l_path_pref := l_factory.new_path_preference_value (l_manager, "files.lib_path", create {PATH}.make_empty)
 			Result.save_preference (l_path_pref)
+			l_path_pref := l_factory.new_path_preference_value (l_manager, "files.lib_src_path", create {PATH}.make_empty)
+			Result.save_preference (l_path_pref)
 
 				-- files.dlls
 			l_arr_pref := l_factory.new_array_preference_value (l_manager, "files.dlls", <<"">>)
 			Result.save_preference (l_arr_pref)
 			l_path_pref := l_factory.new_path_preference_value (l_manager, "files.dll_path", create {PATH}.make_empty)
+			Result.save_preference (l_path_pref)
+			l_path_pref := l_factory.new_path_preference_value (l_manager, "files.dll_src_path", create {PATH}.make_empty)
 			Result.save_preference (l_path_pref)
 
 			Result.set_save_defaults (True)
@@ -589,7 +643,11 @@ feature {NONE} -- Implementation: Basic Ops
 				across
 					vcpkg_lib_text.text.split (',') as ic_libs
 				loop
-					l_cmd.append_string_general ("copy %"" + vcpkg_path_text.text + vcpkg_windows_rel_path.name.out + "\" + ic_libs.item + "%"%N")
+					if vcpkg_lib_src_text.text.is_empty then
+						l_cmd.append_string_general ("copy %"" + vcpkg_path_text.text + vcpkg_windows_rel_path.name.out + "\" + ic_libs.item + "%"%N")
+					else
+						l_cmd.append_string_general ("copy %"" + vcpkg_lib_src_text.text + "\" + ic_libs.item + "%"%N")
+					end
 				end
 			end
 			if not vcpkg_dll_targ_text.text.is_empty and then not vcpkg_dll_targ_text.text.is_empty then
@@ -598,7 +656,11 @@ feature {NONE} -- Implementation: Basic Ops
 				across
 					vcpkg_dll_text.text.split (',') as ic_dlls
 				loop
-					l_cmd.append_string_general ("copy %"" + vcpkg_path_text.text + vcpkg_windows_rel_path.name.out + "\" + ic_dlls.item + "%"%N")
+					if vcpkg_dll_src_text.text.is_empty then
+						l_cmd.append_string_general ("copy %"" + vcpkg_path_text.text + vcpkg_windows_rel_path.name.out + "\" + ic_dlls.item + "%"%N")
+					else
+						l_cmd.append_string_general ("copy %"" + vcpkg_dll_src_text.text + "\" + ic_dlls.item + "%"%N")
+					end
 				end
 			end
 			do_step_batch (l_cmd)
@@ -898,6 +960,11 @@ feature {NONE} -- GUI Objects
 	vcpkg_lib_box: EV_HORIZONTAL_BOX
 	vcpkg_lib_label: EV_LABEL
 	vcpkg_lib_text: EV_TEXT_FIELD
+
+	vcpkg_lib_src_label: EV_LABEL
+	vcpkg_lib_src_text: EV_TEXT_FIELD
+	vcpkg_lib_src_btn: EV_BUTTON
+
 	vcpkg_lib_targ_label: EV_LABEL
 	vcpkg_lib_targ_text: EV_TEXT_FIELD
 	vcpkg_lib_targ_btn: EV_BUTTON
@@ -905,6 +972,11 @@ feature {NONE} -- GUI Objects
 	vcpkg_dll_box: EV_HORIZONTAL_BOX
 	vcpkg_dll_label: EV_LABEL
 	vcpkg_dll_text: EV_TEXT_FIELD
+
+	vcpkg_dll_src_label: EV_LABEL
+	vcpkg_dll_src_text: EV_TEXT_FIELD
+	vcpkg_dll_src_btn: EV_BUTTON
+
 	vcpkg_dll_targ_label: EV_LABEL
 	vcpkg_dll_targ_text: EV_TEXT_FIELD
 	vcpkg_dll_targ_btn: EV_BUTTON
