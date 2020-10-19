@@ -551,18 +551,24 @@ feature -- Preferences
 
 				-- files.libs
 			l_arr_pref := l_factory.new_array_preference_value (l_manager, "files.libs", <<"">>)
+			l_arr_pref.set_description ("A list of LIB files to move from vcpkg to wrap project.")
 			Result.save_preference (l_arr_pref)
 			l_path_pref := l_factory.new_path_preference_value (l_manager, "files.lib_path", create {PATH}.make_empty)
+			l_path_pref.set_description ("The target path to copy LIB files into.")
 			Result.save_preference (l_path_pref)
 			l_path_pref := l_factory.new_path_preference_value (l_manager, "files.lib_src_path", create {PATH}.make_empty)
+			l_path_pref.set_description ("An alternate source path for the list of LIB files.")
 			Result.save_preference (l_path_pref)
 
 				-- files.dlls
 			l_arr_pref := l_factory.new_array_preference_value (l_manager, "files.dlls", <<"">>)
+			l_arr_pref.set_description ("A list of DLL files to move from vcpkg to wrap project.")
 			Result.save_preference (l_arr_pref)
 			l_path_pref := l_factory.new_path_preference_value (l_manager, "files.dll_path", create {PATH}.make_empty)
+			l_path_pref.set_description ("The target path to copy DLL files into.")
 			Result.save_preference (l_path_pref)
 			l_path_pref := l_factory.new_path_preference_value (l_manager, "files.dll_src_path", create {PATH}.make_empty)
+			l_path_pref.set_description ("An alternate source path for the list of DLL files.")
 			Result.save_preference (l_path_pref)
 
 			Result.set_save_defaults (True)
