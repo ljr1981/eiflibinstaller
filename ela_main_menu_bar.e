@@ -77,6 +77,7 @@ feature -- Event Operations
 		do
 			create l_pref_window.make (a_window.prefs)
 			l_pref_window.show_modal_to_window (a_window)
+			a_window.populate_from_preferences
 		end
 
 end

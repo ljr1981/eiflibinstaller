@@ -6,6 +6,8 @@ class
 
 inherit
 	EV_TITLED_WINDOW
+		export {ANY}
+			is_initialized
 		redefine
 			make_with_title,
 			create_interface_objects,
@@ -45,6 +47,8 @@ feature {NONE} -- Initialization
 			populate_from_preferences
 			on_install_ready_test
 		end
+
+feature -- Basic Ops
 
 	populate_from_preferences
 			-- Once the window is initialized, then populate its controls
