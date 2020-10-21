@@ -806,23 +806,49 @@ feature {NONE} -- Where path queries
 			l_ise_key_ptr,
 			l_ise_eiffel_ptr: POINTER
 			l_ise_subkey_count: INTEGER
+
+			l_es_selector: ELA_EIFSTUDIO_SELECTOR_DIALOG
+			l_data: ARRAYED_LIST [STRING]
 		do
 			create l_reg
 			l_ise_key_ptr := l_reg.open_key_with_access ("HKEY_LOCAL_MACHINE\SOFTWARE\ISE", l_reg.key_read)
 			if l_reg.last_call_successful then
 				l_ise_subkey_count := l_reg.number_of_subkeys (l_ise_key_ptr)
-				l_ise_key := l_reg.enumerate_key (l_ise_key_ptr, l_ise_subkey_count - 1)
-				if attached l_ise_key as al_eiffel_studio_key then
-					l_ise_eiffel_ptr := l_reg.open_key_with_access ("HKEY_LOCAL_MACHINE\SOFTWARE\ISE\" + l_ise_key.name.out, l_reg.key_read)
-					l_ise_eiffel_value := l_reg.key_value (l_ise_eiffel_ptr, "ISE_EIFFEL")
-					if attached l_ise_eiffel_value as al_key_value then
-						create Result.make_from_string (al_key_value.string_value)
+					-- select dialog
+				if l_ise_subkey_count > 1 then
+					across
+						(0 |..| (l_ise_subkey_count - 1)) as ic
+					from
+						create l_data.make (l_ise_subkey_count)
+					loop
+						l_ise_key := l_reg.enumerate_key (l_ise_key_ptr, ic.item)
+						if attached l_ise_key as al_effiel_studio_key then
+							l_ise_eiffel_ptr := l_reg.open_key_with_access ("HKEY_LOCAL_MACHINE\SOFTWARE\ISE\" + l_ise_key.name.out, l_reg.key_read)
+							l_ise_eiffel_value := l_reg.key_value (l_ise_eiffel_ptr, "ISE_EIFFEL")
+							if attached l_ise_eiffel_value as al_key_value then
+								l_data.force (al_key_value.string_value)
+							end
+						end
+					end
+					create l_es_selector.make_with_data (l_data)
+					l_es_selector.show_modal_to_window (Current)
+					if attached l_es_selector.selected_eif_studio_path as al_selected_path then
+						Result := al_selected_path
+					end
+				else
+					l_ise_key := l_reg.enumerate_key (l_ise_key_ptr, l_ise_subkey_count - 1)
+					if attached l_ise_key as al_eiffel_studio_key then
+						l_ise_eiffel_ptr := l_reg.open_key_with_access ("HKEY_LOCAL_MACHINE\SOFTWARE\ISE\" + l_ise_key.name.out, l_reg.key_read)
+						l_ise_eiffel_value := l_reg.key_value (l_ise_eiffel_ptr, "ISE_EIFFEL")
+						if attached l_ise_eiffel_value as al_key_value then
+							create Result.make_from_string (al_key_value.string_value)
 
-					else
-						create l_dialog.make_with_title ("Locate EiffelStudio folder")
-						l_dialog.show_modal_to_window (post_init_current)
-						if not l_dialog.path.is_empty then
-							Result := l_dialog.path
+						else
+							create l_dialog.make_with_title ("Locate EiffelStudio folder")
+							l_dialog.show_modal_to_window (post_init_current)
+							if not l_dialog.path.is_empty then
+								Result := l_dialog.path
+							end
 						end
 					end
 				end
