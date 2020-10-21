@@ -835,7 +835,7 @@ feature {NONE} -- Where path queries
 					if attached l_es_selector.selected_eif_studio_path as al_selected_path then
 						Result := al_selected_path
 					end
-				else
+				elseif l_ise_subkey_count = 1 then
 					l_ise_key := l_reg.enumerate_key (l_ise_key_ptr, l_ise_subkey_count - 1)
 					if attached l_ise_key as al_eiffel_studio_key then
 						l_ise_eiffel_ptr := l_reg.open_key_with_access ("HKEY_LOCAL_MACHINE\SOFTWARE\ISE\" + l_ise_key.name.out, l_reg.key_read)
@@ -851,6 +851,8 @@ feature {NONE} -- Where path queries
 							end
 						end
 					end
+				else
+					do_nothing -- there are no EiffelStudio installations in the Registry
 				end
 			end
 		end
