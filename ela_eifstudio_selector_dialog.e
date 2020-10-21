@@ -66,7 +66,7 @@ feature {NONE} -- Initialization
 			ok_btn.disable_sensitive
 			es_list.select_actions.extend (agent ok_btn.enable_sensitive)
 
-			set_size (640, 480)
+			set_size (470, 320)
 
 			Precursor
 		end
