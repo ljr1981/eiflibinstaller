@@ -286,6 +286,24 @@ feature {NONE} -- Initialization
 			vcpkg_install_btn.select_actions.extend (agent vcpkg_clone)
 
 			install_btn.select_actions.extend (agent on_install_btn_click)
+
+				-- All text boxes with "pref" values get pushed to preferences
+			lib_path_text.focus_out_actions.extend (agent push_all_gui_to_prefs)
+			vcpkg_path_text.focus_out_actions.extend (agent push_all_gui_to_prefs)
+			vcpkg_lib_src_text.focus_out_actions.extend (agent push_all_gui_to_prefs)
+			vcpkg_lib_targ_text.focus_out_actions.extend (agent push_all_gui_to_prefs)
+			vcpkg_dll_src_text.focus_out_actions.extend (agent push_all_gui_to_prefs)
+			vcpkg_dll_targ_text.focus_out_actions.extend (agent push_all_gui_to_prefs)
+			eif_path_text.focus_out_actions.extend (agent push_all_gui_to_prefs)
+
+				-- All btn-selections with "pref" values get pushed to preferences
+			lib_path_btn.focus_out_actions.extend (agent push_all_gui_to_prefs)
+			vcpkg_path_btn.focus_out_actions.extend (agent push_all_gui_to_prefs)
+			vcpkg_lib_src_btn.focus_out_actions.extend (agent push_all_gui_to_prefs)
+			vcpkg_lib_targ_btn.focus_out_actions.extend (agent push_all_gui_to_prefs)
+			vcpkg_dll_src_btn.focus_out_actions.extend (agent push_all_gui_to_prefs)
+			vcpkg_dll_targ_btn.focus_out_actions.extend (agent push_all_gui_to_prefs)
+			eif_path_btn.focus_out_actions.extend (agent push_all_gui_to_prefs)
 		end
 
 	initialize_preferences
@@ -573,6 +591,45 @@ feature -- Preferences
 
 			Result.set_save_defaults (True)
 			Result.save_preferences
+		end
+
+	push_all_gui_to_prefs
+			-- Push all GUI element values to proper preferences.
+		do
+				-- lib name
+			set_string_pref ("library.name", lib_name_text.text)
+				-- lib path
+			if attached lib_path_text.text as al_text and then not al_text.is_empty then
+				set_path_pref ("paths.wrapc_lib", create {PATH}.make_from_string (al_text))
+			end
+				-- vcpkg path
+			if attached vcpkg_path_text.text as al_text and then not al_text.is_empty then
+				set_path_pref ("paths.vcpkg", create {PATH}.make_from_string (al_text))
+			end
+				-- lib list
+			set_string_pref ("library.libs", vcpkg_lib_text.text)
+				-- lib src path
+			if attached vcpkg_lib_src_text.text as al_text and then not al_text.is_empty then
+				set_path_pref ("files.lib_src_path", create {PATH}.make_from_string (al_text))
+			end
+				-- lib targ path
+			if attached vcpkg_lib_targ_text.text as al_text and then not al_text.is_empty then
+				set_path_pref ("files.lib_path", create {PATH}.make_from_string (al_text))
+			end
+				-- dll list
+			set_string_pref ("library.dlls", vcpkg_dll_text.text)
+				-- dll src path
+			if attached vcpkg_dll_src_text.text as al_text and then not al_text.is_empty then
+				set_path_pref ("files.dll_src_path", create {PATH}.make_from_string (al_text))
+			end
+				-- dll targ path
+			if attached vcpkg_dll_targ_text.text as al_text and then not al_text.is_empty then
+				set_path_pref ("files.dll_path", create {PATH}.make_from_string (al_text))
+			end
+				-- es path
+			if attached eif_path_text.text as al_text and then not al_text.is_empty then
+				set_path_pref ("paths.eiffel_studio", create {PATH}.make_from_string (al_text))
+			end
 		end
 
 	set_string_pref (a_name, a_pref: STRING)
