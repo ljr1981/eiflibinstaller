@@ -48,43 +48,7 @@ feature {NONE} -- Initialization
 			on_install_ready_test
 		end
 
-feature -- Basic Ops
-
-	populate_from_preferences
-			-- Once the window is initialized, then populate its controls
-			--	from the Preferences as-needed.
-		do
-			if attached prefs.get_preference_value_direct ("library.name") as al_pref then
-				lib_name_text.set_text (al_pref)
-			end
-			if attached prefs.get_preference_value_direct ("paths.wrapc_lib") as al_pref then
-				lib_path_text.set_text (al_pref)
-			end
-			if attached prefs.get_preference_value_direct ("paths.vcpkg") as al_pref then
-				vcpkg_path_text.set_text (al_pref)
-			end
-			if attached prefs.get_preference_value_direct ("files.libs") as al_pref then
-				vcpkg_lib_text.set_text (al_pref)
-			end
-			if attached prefs.get_preference_value_direct ("files.dlls") as al_pref then
-				vcpkg_dll_text.set_text (al_pref)
-			end
-			if attached prefs.get_preference_value_direct ("files.lib_path") as al_pref then
-				vcpkg_lib_targ_text.set_text (al_pref)
-			end
-			if attached prefs.get_preference_value_direct ("files.lib_src_path") as al_pref then
-				vcpkg_lib_src_text.set_text (al_pref)
-			end
-			if attached prefs.get_preference_value_direct ("files.dll_path") as al_pref then
-				vcpkg_dll_targ_text.set_text (al_pref)
-			end
-			if attached prefs.get_preference_value_direct ("files.dll_src_path") as al_pref then
-				vcpkg_dll_src_text.set_text (al_pref)
-			end
-			if attached prefs.get_preference_value_direct ("paths.eiffel_studio") as al_pref then
-				eif_path_text.set_text (al_pref)
-			end
-		end
+feature {NONE} -- Initialization: Support
 
 	create_interface_objects
 			--<Precursor>
@@ -339,6 +303,60 @@ feature -- Basic Ops
 			a_box.set_border_width (3)
 		end
 
+feature -- Basic Ops
+
+	populate_from_preferences
+			-- Once the window is initialized, then populate its controls
+			--	from the Preferences as-needed.
+		do
+			if attached prefs.get_preference_value_direct ("library.name") as al_pref then
+				lib_name_text.set_text (al_pref)
+			end
+			if attached prefs.get_preference_value_direct ("paths.wrapc_lib") as al_pref then
+				lib_path_text.set_text (al_pref)
+			end
+			if attached prefs.get_preference_value_direct ("paths.vcpkg") as al_pref then
+				vcpkg_path_text.set_text (al_pref)
+			end
+			if attached prefs.get_preference_value_direct ("files.libs") as al_pref then
+				vcpkg_lib_text.set_text (al_pref)
+			end
+			if attached prefs.get_preference_value_direct ("files.dlls") as al_pref then
+				vcpkg_dll_text.set_text (al_pref)
+			end
+			if attached prefs.get_preference_value_direct ("files.lib_path") as al_pref then
+				vcpkg_lib_targ_text.set_text (al_pref)
+			end
+			if attached prefs.get_preference_value_direct ("files.lib_src_path") as al_pref then
+				vcpkg_lib_src_text.set_text (al_pref)
+			end
+			if attached prefs.get_preference_value_direct ("files.dll_path") as al_pref then
+				vcpkg_dll_targ_text.set_text (al_pref)
+			end
+			if attached prefs.get_preference_value_direct ("files.dll_src_path") as al_pref then
+				vcpkg_dll_src_text.set_text (al_pref)
+			end
+			if attached prefs.get_preference_value_direct ("paths.eiffel_studio") as al_pref then
+				eif_path_text.set_text (al_pref)
+			end
+		end
+
+	on_install_ready_test
+			-- What happens to test if we're ready to install?
+		do
+			if
+				not lib_name_text.text.is_empty and then
+				not lib_path_text.text.is_empty and then
+				not vcpkg_path_text.text.is_empty and then
+				not eif_path_text.text.is_empty and then
+				not git_path_text.text.is_empty
+			then
+				install_btn.enable_sensitive
+			else
+				install_btn.disable_sensitive
+			end
+		end
+
 feature {NONE} -- GUI Events
 
 	on_where_git
@@ -495,22 +513,6 @@ feature {NONE} -- GUI Events
 			out_text.scroll_to_end
 
 			log_info (Current, a_msg)
-		end
-
-	on_install_ready_test
-			-- What happens to test if we're ready to install?
-		do
-			if
-				not lib_name_text.text.is_empty and then
-				not lib_path_text.text.is_empty and then
-				not vcpkg_path_text.text.is_empty and then
-				not eif_path_text.text.is_empty and then
-				not git_path_text.text.is_empty
-			then
-				install_btn.enable_sensitive
-			else
-				install_btn.disable_sensitive
-			end
 		end
 
 feature -- Preferences
@@ -815,7 +817,7 @@ feature {NONE} -- Implementation: Access
 			create l_file.make_create_read_write ("step_" + step.out + ".bat")
 			l_file.put_string (a_cmd)
 			l_file.put_string ("%N")
-			l_file.put_string ("cd %"" + l_env.current_working_path.name.out + "%"%N")
+			l_file.put_string ("cd %"" + lib_path_text.text.out + "%"%N")
 			l_file.close
 
 			process.output_of_command_with_agent ("step_" + step.out + ".bat", "./", agent out_text_append (?))
