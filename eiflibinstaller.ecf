@@ -12,7 +12,7 @@
 			<concurrency support="scoop"/>
 			<void_safety support="all" use="all"/>
 		</capability>
-		<library name="base" location="$ISE_LIBRARY\library\base\base-safe.ecf"/>
+		<library name="base" location="$ISE_LIBRARY\library\base\base.ecf"/>
 		<library name="curl" location="$ISE_LIBRARY\library\cURL\cURL.ecf"/>
 		<library name="diff" location="$ISE_LIBRARY\library\diff\diff.ecf"/>
 		<library name="framework" location="..\framework\framework.ecf"/>

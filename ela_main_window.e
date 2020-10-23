@@ -817,7 +817,7 @@ feature {NONE} -- Implementation: Access
 			create l_file.make_create_read_write ("step_" + step.out + ".bat")
 			l_file.put_string (a_cmd)
 			l_file.put_string ("%N")
-			l_file.put_string ("cd %"" + lib_path_text.text.out + "%"%N")
+			l_file.put_string ("cd %"" + lib_path_text.text.out + "%"%N") -- comment
 			l_file.close
 
 			process.output_of_command_with_agent ("step_" + step.out + ".bat", "./", agent out_text_append (?))
@@ -946,8 +946,18 @@ feature {NONE} -- Where path queries
 
 feature {NONE} -- Path-extension Constants
 
-	vcpkg_buildtrees_lib_x64_windows_rel: STRING = "/buildtrees/<<LIB>>/<<PLATFORM>>-windows-rel/"
+	vcpkg_buildtrees_lib_x64_windows_rel: STRING -- = "/buildtrees/<<LIB>>/<<PLATFORM>>-windows-rel/"
 			-- Where is the "rel" folder under vcpkg?
+		once
+			create Result.make_empty
+			Result.append_character ({OPERATING_ENVIRONMENT}.directory_separator)
+			Result.append_string_general ("buildtrees")
+			Result.append_character ({OPERATING_ENVIRONMENT}.directory_separator)
+			Result.append_string_general ("<<LIB>>")
+			Result.append_character ({OPERATING_ENVIRONMENT}.directory_separator)
+			Result.append_string_general ("<<PLATFORM>>-windows-rel")
+			Result.append_character ({OPERATING_ENVIRONMENT}.directory_separator)
+		end
 
 	vcpkg_windows_rel_path: PATH
 			-- Compute the PATH based on <<PLATFORM>>
@@ -1002,9 +1012,13 @@ feature {NONE} -- Downloads & Clones
 			l_web: EV_WEB_BROWSER
 		do
 			create l_web
-			l_web.load_uri ("https://github.com/git-for-windows/git/releases/download/v2.28.0.windows.1/Git-2.28.0-64-bit.exe")
+			l_web.load_uri (git_win_url)
 			l_web.show
 		end
+
+	git_win_url: STRING = "[
+https://github.com/git-for-windows/git/releases/download/v2.28.0.windows.1/Git-2.28.0-64-bit.exe
+]"
 
 	vcpkg_clone
 			-- Clone vcpkg using a `process' output CALL batch file command.
