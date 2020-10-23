@@ -15,7 +15,7 @@
 		<library name="base" location="$ISE_LIBRARY\library\base\base.ecf"/>
 		<library name="curl" location="$ISE_LIBRARY\library\cURL\cURL.ecf"/>
 		<library name="diff" location="$ISE_LIBRARY\library\diff\diff.ecf"/>
-		<library name="framework" location="..\framework\framework.ecf"/>
+		<library name="encoding" location="$ISE_LIBRARY\library\encoding\encoding.ecf"/>
 		<library name="logging" location="$ISE_LIBRARY\library\runtime\logging\logging.ecf"/>
 		<library name="preferences" location="$ISE_LIBRARY\library\preferences\preferences.ecf"/>
 		<library name="process" location="$ISE_LIBRARY\library\process\base\base_process.ecf"/>
